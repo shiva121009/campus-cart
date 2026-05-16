@@ -1,4 +1,4 @@
-# minorProject-CampusCart
+# majorProject-CampusCart
 
 
 
