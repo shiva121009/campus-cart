@@ -1,0 +1,218 @@
+.dash-notif {
+  max-width: 1400px;
+  margin: 0 auto 16px;
+  padding: 0 clamp(16px, 3vw, 28px);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.dash-notif-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--color-bg-subtle);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.dash-notif-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.dash-notif-bell {
+  color: var(--color-primary);
+}
+
+.dash-notif-badge {
+  min-width: 20px;
+  padding: 2px 7px;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  text-align: center;
+  border-radius: 999px;
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.dash-notif-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dash-notif-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.dash-notif-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.dash-notif-switch-ui {
+  position: relative;
+  width: 40px;
+  height: 22px;
+  border-radius: 999px;
+  background: var(--color-border);
+  transition: background 0.2s;
+}
+
+.dash-notif-switch-ui::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.dash-notif-switch input:checked + .dash-notif-switch-ui {
+  background: var(--color-primary);
+}
+
+.dash-notif-switch input:checked + .dash-notif-switch-ui::after {
+  transform: translateX(18px);
+}
+
+.dash-notif-link-btn {
+  padding: 0;
+  border: none;
+  background: none;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.dash-notif-link-btn:hover {
+  text-decoration: underline;
+}
+
+.dash-notif-body {
+  padding: 12px 16px 16px;
+}
+
+.dash-notif-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dash-notif-item {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+}
+
+.dash-notif-item.is-read {
+  opacity: 0.75;
+}
+
+.dash-notif-item.notif-info {
+  border-left: 4px solid #3b82f6;
+}
+
+.dash-notif-item.notif-warning {
+  border-left: 4px solid #f59e0b;
+}
+
+.dash-notif-item.notif-restriction {
+  border-left: 4px solid #dc2626;
+}
+
+.dash-notif-item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.dash-notif-cat {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.dash-notif-item-head time {
+  margin-left: auto;
+  font-size: 0.6875rem;
+}
+
+.dash-notif-msg {
+  margin: 0 0 8px;
+  font-size: 0.9375rem;
+  line-height: 1.55;
+  color: var(--color-text);
+  white-space: pre-wrap;
+}
+
+.dash-notif-suspend-tag {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-danger);
+}
+
+.dash-notif-empty,
+.dash-notif-paused {
+  margin: 0;
+  padding: 8px 0;
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.dash-notif-footer {
+  margin: 12px 0 0;
+  padding-top: 12px;
+  border-top: 1px dashed var(--color-border);
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.dash-notif-footer a {
+  color: var(--color-primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dash-notif-footer a:hover {
+  text-decoration: underline;
+}
+
+.dash-notif.is-collapsed .dash-notif-header {
+  border-bottom: none;
+}

@@ -1,0 +1,124 @@
+.view-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding-top: calc(var(--nav-h) + 16px);
+  box-sizing: border-box;
+}
+
+.loading-text {
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--color-text-muted);
+  margin-top: 48px;
+}
+
+.view-container {
+  max-width: 1040px;
+  margin: 24px auto 48px;
+  background: var(--color-surface);
+  padding: clamp(24px, 4vw, 40px);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 4vw, 40px);
+  align-items: flex-start;
+}
+
+.image-column {
+  width: 100%;
+}
+
+.product-image {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  background: var(--color-bg-subtle);
+}
+
+.product-image--empty {
+  min-height: 280px;
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-subtle),
+    var(--color-skeleton)
+  );
+}
+
+.details-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-category {
+  display: inline-block;
+  align-self: flex-start;
+  margin-bottom: 12px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.product-title {
+  margin: 0 0 12px;
+  color: var(--color-text);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.product-price {
+  margin: 0 0 16px;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.product-description {
+  margin: 0 0 16px;
+  color: var(--color-text-muted);
+  line-height: 1.65;
+}
+
+.product-rent {
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.add-to-cart-button {
+  margin-top: auto;
+  width: 100%;
+  padding: 14px 18px;
+  background: var(--color-success);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1.05rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.add-to-cart-button:hover {
+  background: var(--color-success-hover);
+}
+
+.add-to-cart-button:active {
+  transform: scale(0.99);
+}
+
+@media (max-width: 768px) {
+  .view-container {
+    grid-template-columns: 1fr;
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+}

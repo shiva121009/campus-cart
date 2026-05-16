@@ -1,0 +1,65 @@
+.welcome-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--nav-h);
+  padding: 0 clamp(16px, 4vw, 32px);
+  background: var(--color-navbar-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.welcome-nav-brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-primary);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+}
+
+.welcome-nav-brand:hover {
+  color: var(--color-primary-hover);
+}
+
+.welcome-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.welcome-nav-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  background: transparent;
+  transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.welcome-nav-btn:hover {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+}
+
+@media (max-width: 480px) {
+  .welcome-nav-btn {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.875rem;
+  }
+}

@@ -1,0 +1,64 @@
+.pending-page {
+  min-height: 100vh;
+  padding: calc(var(--nav-h) + 24px) 20px 40px;
+  background: var(--color-bg);
+}
+
+.pending-card {
+  max-width: 520px;
+  margin: 40px auto;
+  padding: 32px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.pending-card h1 {
+  margin: 0 0 12px;
+  font-size: 1.5rem;
+}
+
+.pending-card p {
+  margin: 0 0 8px;
+  color: var(--color-text-muted);
+  line-height: 1.5;
+}
+
+.pending-hint {
+  font-size: 0.875rem;
+  margin-top: 16px !important;
+}
+
+.pending-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.pending-btn {
+  padding: 12px 20px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: var(--color-primary);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.pending-btn-secondary {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+}
+
+.auth-loading-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+}

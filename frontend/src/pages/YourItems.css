@@ -1,0 +1,145 @@
+.your-items-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  padding-top: 0;
+  padding-bottom: 48px;
+  box-sizing: border-box;
+}
+
+.your-items-container {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px clamp(16px, 3vw, 24px);
+}
+
+.your-items-title {
+  text-align: center;
+  color: var(--color-text);
+  font-weight: 700;
+  font-size: clamp(1.35rem, 3vw, 1.65rem);
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.info-text {
+  text-align: center;
+  font-size: 1.05rem;
+  color: var(--color-text-muted);
+}
+
+.items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.item-card {
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease;
+}
+
+.item-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.item-card h3 {
+  color: var(--color-primary);
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.item-card-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  margin: 0 0 12px;
+  background: var(--color-bg-subtle);
+}
+
+.item-card-desc {
+  color: var(--color-text-muted);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.item-card-price {
+  margin: 8px 0 0;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.edit-button,
+.delete-button,
+.messages-button {
+  border: none;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.875rem;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.edit-button {
+  flex: 1;
+  background: var(--color-primary);
+}
+
+.delete-button {
+  flex: 1;
+  background: var(--color-danger);
+}
+
+.messages-button {
+  margin-top: 10px;
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--color-success);
+  padding: 12px;
+}
+
+.item-msg-badge {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 999px;
+  background: var(--color-on-primary);
+  color: var(--color-success);
+}
+
+.edit-button:hover,
+.delete-button:hover,
+.messages-button:hover {
+  opacity: 0.92;
+}
+
+.edit-button:active,
+.delete-button:active,
+.messages-button:active {
+  transform: scale(0.98);
+}

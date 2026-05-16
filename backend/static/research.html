@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced NLP Research Lab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #f8fafc; padding: 20px; color: #0f172a; }
+        .container { max-width: 1400px; margin: 0 auto; } /* Wider for 4 cols */
+        
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { font-weight: 800; font-size: 2rem; color: #1e293b; }
+        
+        /* SEARCH */
+        .search-box { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; gap: 10px; margin-bottom: 30px; }
+        input { flex: 1; padding: 12px; font-size: 1rem; border: 2px solid #cbd5e1; border-radius: 8px; }
+        button { background: #0f172a; color: white; border: none; padding: 0 30px; font-weight: 600; border-radius: 8px; cursor: pointer; }
+
+        /* GRID SYSTEM - 4 COLUMNS */
+        .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; display: none; }
+        
+        .col { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .col-header { padding: 15px; font-weight: 700; font-size: 0.95rem; text-align: center; border-bottom: 2px solid #eee; }
+        
+        /* COLORS FOR MODELS */
+        .h-tfidf { background: #f1f5f9; color: #64748b; border-color: #cbd5e1; } /* Grey */
+        .h-bm25  { background: #fff7ed; color: #c2410c; border-color: #fdba74; } /* Orange */
+        .h-w2v   { background: #eff6ff; color: #1d4ed8; border-color: #93c5fd; } /* Blue */
+        .h-bert  { background: #f0fdf4; color: #15803d; border-color: #86efac; } /* Green (Winner) */
+
+        .item { padding: 10px; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 10px; }
+        .thumb { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; background: #eee; }
+        .score { font-size: 0.75rem; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: #eee; }
+        
+        .loader { text-align: center; display: none; padding: 40px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>NLP Model Comparative Analysis</h1>
+        <p>Evaluating Statistical vs. Static vs. Contextual Embeddings</p>
+    </header>
+
+    <div class="search-box">
+        <input type="text" id="queryInput" placeholder="Try: 'device for math', 'gym weights', 'make hot tea'...">
+        <button onclick="runExperiment()">Run Benchmark</button>
+    </div>
+
+    <div class="loader" id="loader">Processing 4 Neural Models...</div>
+
+    <div class="grid" id="resultsGrid">
+        <div class="col">
+            <div class="col-header h-tfidf">TF-IDF (Baseline)</div>
+            <div id="res-tfidf"></div>
+        </div>
+        <div class="col">
+            <div class="col-header h-bm25">BM25 (Probabilistic)</div>
+            <div id="res-bm25"></div>
+        </div>
+        <div class="col">
+            <div class="col-header h-w2v">Word2Vec (Static)</div>
+            <div id="res-w2v"></div>
+        </div>
+        <div class="col">
+            <div class="col-header h-bert">BERT (Proposed)</div>
+            <div id="res-bert"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function runExperiment() {
+        const query = document.getElementById('queryInput').value;
+        if (!query) return;
+
+        document.getElementById('loader').style.display = 'block';
+        document.getElementById('resultsGrid').style.display = 'none';
+
+        try {
+            const res = await fetch(`/research/compare?query=${encodeURIComponent(query)}`);
+            const data = await res.json();
+
+            renderCol('res-tfidf', data.tfidf);
+            renderCol('res-bm25', data.bm25);
+            renderCol('res-w2v', data.w2v);
+            renderCol('res-bert', data.bert);
+
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('resultsGrid').style.display = 'grid';
+        } catch (e) { alert("Error connecting to backend"); }
+    }
+
+    function renderCol(id, items) {
+        const div = document.getElementById(id);
+        div.innerHTML = items.map(item => `
+            <div class="item">
+                <img src="${item.image ? '/static/uploads/'+item.image : ''}" class="thumb" onerror="this.style.display='none'">
+                <div style="flex:1; min-width:0;">
+                    <div style="font-size:0.85rem; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.title}</div>
+                    <div class="score">Score: ${item.score.toFixed(3)}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+</script>
+</body>
+</html>
