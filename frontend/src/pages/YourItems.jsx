@@ -52,6 +52,20 @@ function YourItems() {
     navigate(`/additem/${id}`);
   };
 
+  const handleMarkSold = (id) => {
+    api
+      .post(`/api/listings/${id}/sold`)
+      .then(() => {
+        setYourItems((prev) =>
+          prev.map((i) => (i.id === id ? { ...i, is_sold: true, status: "sold" } : i))
+        );
+        showToast("Marked as sold", "success");
+      })
+      .catch((err) =>
+        showToast(err.response?.data?.message || "Failed", "error")
+      );
+  };
+
   return (
     <div className="page-shell your-items-page">
       <Navbar />
@@ -81,9 +95,19 @@ function YourItems() {
                 <p className="item-card-desc">{item.description}</p>
                 <p className="item-card-price">
                   <strong>Price:</strong> ₹{item.price}
+                  {item.is_sold && <span className="item-sold-tag"> · Sold</span>}
                 </p>
 
                 <div className="button-container">
+                  {!item.is_sold && (
+                    <button
+                      type="button"
+                      onClick={() => handleMarkSold(item.id)}
+                      className="edit-button"
+                    >
+                      Mark sold
+                    </button>
+                  )}
                   <button
                     type="button"
                     onClick={() => handleEdit(item.id)}

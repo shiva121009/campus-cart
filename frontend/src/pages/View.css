@@ -1,8 +1,6 @@
 .view-page {
   min-height: 100vh;
   background: var(--color-bg);
-  padding-top: calc(var(--nav-h) + 16px);
-  box-sizing: border-box;
 }
 
 .loading-text {
@@ -113,6 +111,120 @@
 
 .add-to-cart-button:active {
   transform: scale(0.99);
+}
+
+.view-thumbs {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.view-thumbs button {
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  width: 64px;
+  height: 64px;
+}
+
+.view-thumbs button.active {
+  border-color: var(--color-primary);
+}
+
+.view-thumbs img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.view-sold-badge {
+  display: inline-block;
+  background: #6b7280;
+  color: #fff;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.view-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.view-icon-btn {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  background: var(--color-surface);
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.view-icon-btn .is-active {
+  color: #e11d48;
+}
+
+.view-seller-link {
+  font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.view-verified-icon {
+  color: #059669;
+}
+
+.view-chat {
+  margin-top: 1rem;
+  padding: 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+
+.view-chat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.5rem;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.view-chat-list li.mine {
+  text-align: right;
+}
+
+.view-chat-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-chat-form input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid var(--color-border);
+}
+
+.view-similar {
+  max-width: 1040px;
+  margin: 0 auto 3rem;
+}
+
+.view-similar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
 }
 
 @media (max-width: 768px) {

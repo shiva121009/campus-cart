@@ -1,39 +1,59 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 const STORAGE_KEY = "campuscart-theme";
 
 const ThemeContext = createContext(null);
 
 function getPreferredTheme() {
-  const saved = localStorage.getItem(STORAGE_KEY);
-  if (saved === "light" || saved === "dark") return saved;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === "light" || saved === "dark") return saved;
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-color-scheme: dark)")?.matches
+    ) {
+      return "dark";
+    }
+  } catch {
+    /* private mode / blocked storage */
+  }
+  return "light";
 }
 
 function applyTheme(theme) {
-  document.documentElement.setAttribute("data-theme", theme);
-  document.documentElement.style.colorScheme = theme;
+  const safe = theme === "dark" ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", safe);
+  document.documentElement.style.colorScheme = safe;
 }
 
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    if (typeof window === "undefined") return "light";
-    return getPreferredTheme();
-  });
+  const [theme, setThemeState] = useState("light");
+
+  useEffect(() => {
+    setThemeState(getPreferredTheme());
+  }, []);
 
   useEffect(() => {
     applyTheme(theme);
-    localStorage.setItem(STORAGE_KEY, theme);
+    try {
+      localStorage.setItem(STORAGE_KEY, theme);
+    } catch {
+      /* ignore */
+    }
   }, [theme]);
 
+  const setTheme = (next) => {
+    setThemeState(next === "dark" ? "dark" : "light");
+  };
+
   const toggleTheme = () => {
-    setTheme((t) => (t === "dark" ? "light" : "dark"));
+    setThemeState((t) => (t === "dark" ? "light" : "dark"));
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme, isDark: theme === "dark" }}>
+    <ThemeContext.Provider
+      value={{ theme, setTheme, toggleTheme, isDark: theme === "dark" }}
+    >
       {children}
     </ThemeContext.Provider>
   );

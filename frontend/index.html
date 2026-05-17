@@ -13,14 +13,18 @@
     <title>CampusCart</title>
     <script>
       (function () {
-        var t = localStorage.getItem("campuscart-theme");
-        var dark =
-          t === "dark" ||
-          (!t && window.matchMedia("(prefers-color-scheme: dark)").matches);
-        if (dark) {
-          document.documentElement.setAttribute("data-theme", "dark");
-          document.documentElement.style.colorScheme = "dark";
-        }
+        try {
+          var t = localStorage.getItem("campuscart-theme");
+          var dark =
+            t === "dark" ||
+            (!t &&
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (dark) {
+            document.documentElement.setAttribute("data-theme", "dark");
+            document.documentElement.style.colorScheme = "dark";
+          }
+        } catch (e) {}
       })();
     </script>
   </head>

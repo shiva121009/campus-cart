@@ -8,9 +8,11 @@ import {
   FaClipboardList,
   FaHome,
   FaSignOutAlt,
+  FaFlag,
 } from "react-icons/fa";
 import api from "../../api/client";
 import { useAuth } from "../../context/AuthContext";
+import AdminGlobalSearch from "./AdminGlobalSearch";
 import "./AdminLayout.css";
 
 const links = [
@@ -19,6 +21,7 @@ const links = [
   { to: "/admin/users", label: "Users", icon: FaUsers },
   { to: "/admin/listings", label: "Listings", icon: FaBox },
   { to: "/admin/orders", label: "Orders", icon: FaClipboardList },
+  { to: "/admin/reports", label: "Reports", icon: FaFlag, badgeKey: "reports" },
 ];
 
 function AdminLayout() {
@@ -26,15 +29,26 @@ function AdminLayout() {
   const location = useLocation();
   const { logout: authLogout, user } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
+  const [reportsCount, setReportsCount] = useState(0);
 
   const refreshPending = () =>
     api
       .get("/api/admin/stats")
-      .then((res) => setPendingCount(res.data?.users_pending || 0))
-      .catch(() => setPendingCount(0));
+      .then((res) => {
+        setPendingCount(res.data?.users_pending || 0);
+        setReportsCount(res.data?.reports_pending || 0);
+      })
+      .catch(() => {
+        setPendingCount(0);
+        setReportsCount(0);
+      });
 
   useEffect(() => {
     refreshPending();
+    const onRefresh = () => refreshPending();
+    window.addEventListener("campuscart:refresh-admin-stats", onRefresh);
+    return () =>
+      window.removeEventListener("campuscart:refresh-admin-stats", onRefresh);
   }, [location.pathname]);
 
   const handleLogout = () => {
@@ -63,6 +77,9 @@ function AdminLayout() {
               {badgeKey === "pending" && pendingCount > 0 && (
                 <span className="admin-nav-badge">{pendingCount}</span>
               )}
+              {badgeKey === "reports" && reportsCount > 0 && (
+                <span className="admin-nav-badge">{reportsCount}</span>
+              )}
             </NavLink>
           ))}
         </nav>
@@ -86,6 +103,9 @@ function AdminLayout() {
         </div>
       </aside>
       <main className="admin-main">
+        <div className="admin-main-toolbar">
+          <AdminGlobalSearch />
+        </div>
         <Outlet context={{ refreshPending }} />
       </main>
     </div>

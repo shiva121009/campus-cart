@@ -1,0 +1,90 @@
+.admin-chart-panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+
+.admin-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.admin-chart-legend-item {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.admin-chart-legend-item::before {
+  content: "";
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.chart-bar--listings.admin-chart-legend-item::before,
+.admin-chart-bar.chart-bar--listings {
+  background: #6366f1;
+}
+
+.chart-bar--orders.admin-chart-legend-item::before,
+.admin-chart-bar.chart-bar--orders {
+  background: #0ea5e9;
+}
+
+.chart-bar--verifications.admin-chart-legend-item::before,
+.admin-chart-bar.chart-bar--verifications {
+  background: #22c55e;
+}
+
+.admin-chart-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 140px;
+  margin-top: 12px;
+  padding-top: 8px;
+}
+
+.admin-chart-day {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+  height: 100%;
+}
+
+.admin-chart-day-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  flex: 1;
+  width: 100%;
+  max-width: 48px;
+}
+
+.admin-chart-bar {
+  width: 10px;
+  min-height: 0;
+  border-radius: 3px 3px 0 0;
+  transition: height 0.3s ease;
+}
+
+.admin-chart-day-label {
+  font-size: 0.65rem;
+  color: var(--color-text-muted);
+  margin-top: 6px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}

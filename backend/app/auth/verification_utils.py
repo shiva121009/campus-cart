@@ -238,6 +238,10 @@ def migrate_user_verification_columns(app):
             statements.append(
                 "ALTER TABLE Users ADD COLUMN notifications_enabled BOOLEAN DEFAULT 1"
             )
+        if "reset_token" not in existing:
+            statements.append("ALTER TABLE Users ADD COLUMN reset_token VARCHAR(64)")
+        if "reset_token_expires" not in existing:
+            statements.append("ALTER TABLE Users ADD COLUMN reset_token_expires DATETIME")
 
         for sql in statements:
             db.session.execute(text(sql))
@@ -268,3 +272,28 @@ def migrate_user_verification_columns(app):
 
         if "admin_notifications" not in inspector.get_table_names():
             db.create_all()
+
+        migrate_listing_enhancements(app)
+
+
+def migrate_listing_enhancements(app):
+    with app.app_context():
+        inspector = inspect(db.engine)
+        if "AllPost" in inspector.get_table_names():
+            existing = {c["name"] for c in inspector.get_columns("AllPost")}
+            post_cols = [
+                ("condition", "VARCHAR(20) DEFAULT 'good'"),
+                ("negotiable", "BOOLEAN DEFAULT 0"),
+                ("pickup_location", "VARCHAR(120)"),
+                ("is_sold", "BOOLEAN DEFAULT 0"),
+                ("view_count", "INTEGER DEFAULT 0"),
+                ("extra_images", "TEXT"),
+            ]
+            for col, typedef in post_cols:
+                if col not in existing:
+                    db.session.execute(
+                        text(f"ALTER TABLE AllPost ADD COLUMN {col} {typedef}")
+                    )
+            db.session.commit()
+
+        db.create_all()

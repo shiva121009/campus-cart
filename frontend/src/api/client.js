@@ -6,20 +6,42 @@ const api = axios.create({
   withCredentials: true,
 });
 
+const PUBLIC_PATHS = new Set([
+  "/",
+  "/login",
+  "/register",
+  "/admin/login",
+  "/admin/register",
+  "/pending-verification",
+  "/account-restricted",
+  "/logout",
+  "/forgot-password",
+  "/privacy",
+  "/terms",
+]);
+
+function isPublicRoute(path) {
+  if (PUBLIC_PATHS.has(path)) return true;
+  return (
+    path.startsWith("/pending-verification") ||
+    path.startsWith("/account-restricted")
+  );
+}
+
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error.response?.status;
     const data = error.response?.data;
     const path = window.location.pathname;
+    const requestUrl = error.config?.url || "";
 
-    if (
-      status === 401 &&
-      !path.startsWith("/login") &&
-      !path.startsWith("/register") &&
-      !path.startsWith("/admin/login") &&
-      !path.startsWith("/admin/register")
-    ) {
+    // Session check on public pages — let AuthContext handle 401 quietly
+    if (status === 401 && requestUrl.includes("/api/me")) {
+      return Promise.reject(error);
+    }
+
+    if (status === 401 && !isPublicRoute(path)) {
       window.location.href = path.startsWith("/admin")
         ? "/admin/login"
         : "/login";

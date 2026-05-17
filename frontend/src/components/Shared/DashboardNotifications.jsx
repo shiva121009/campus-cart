@@ -32,7 +32,7 @@ function formatWhen(iso) {
 }
 
 function DashboardNotifications() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [enabled, setEnabled] = useState(true);
   const [items, setItems] = useState([]);
   const [unread, setUnread] = useState(0);

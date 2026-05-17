@@ -4,6 +4,15 @@
   background: var(--color-bg);
 }
 
+.admin-main-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--color-border);
+}
+
 .admin-sidebar {
   width: 240px;
   flex-shrink: 0;
@@ -230,6 +239,16 @@
   color: #b91c1c;
 }
 
+.admin-badge.reviewed {
+  background: rgba(34, 197, 94, 0.15);
+  color: #16a34a;
+}
+
+.admin-badge.dismissed {
+  background: rgba(107, 114, 128, 0.15);
+  color: #4b5563;
+}
+
 .admin-btn-message {
   background: rgba(79, 70, 229, 0.12);
   color: var(--color-primary);
@@ -337,6 +356,43 @@
   font-weight: 700;
   color: var(--color-primary);
   font-family: ui-monospace, monospace;
+}
+
+.admin-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.admin-filter-bar label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+.admin-filter-bar select,
+.admin-filter-bar input[type="search"] {
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+.admin-filter-bar--users input[type="search"] {
+  flex: 1;
+  min-width: 180px;
+  max-width: 320px;
+}
+
+.admin-filter-count {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+  margin-left: auto;
 }
 
 .admin-verify-actions {

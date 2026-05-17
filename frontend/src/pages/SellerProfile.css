@@ -1,0 +1,54 @@
+.seller-card {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: var(--surface-elevated, #f9fafb);
+  border: 1px solid var(--border, #e5e7eb);
+}
+
+.seller-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  color: #059669;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.seller-block-btn {
+  margin-top: 0.75rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #fca5a5;
+  background: transparent;
+  color: #b91c1c;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.seller-listings-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.seller-reviews ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem;
+}
+
+.seller-reviews li {
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border, #eee);
+}

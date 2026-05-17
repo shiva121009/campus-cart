@@ -4,7 +4,12 @@ from flask_cors import CORS
 from flask_login import LoginManager
 from app.models import db, User, Post, YourCart
 
-ALLOWED_ORIGINS = ("http://localhost:5173", "http://127.0.0.1:5173")
+ALLOWED_ORIGINS = (
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5174",
+)
 
 
 def create_app():
@@ -86,6 +91,7 @@ def create_app():
     from app.recommendation.recommendRoutes import recommend_bp
     from app.research.routes import research_bp
     from app.auth.adminRoutes import admin_bp
+    from app.listings.ux_routes import ux_bp
 
     app.register_blueprint(recommend_bp)
     app.register_blueprint(auth_bp)
@@ -95,6 +101,7 @@ def create_app():
     app.register_blueprint(search)
     app.register_blueprint(checkout_bp)
     app.register_blueprint(research_bp)
+    app.register_blueprint(ux_bp)
 
     @app.route("/api/health", methods=["GET"])
     def api_health():
@@ -104,6 +111,8 @@ def create_app():
             {
                 "ok": True,
                 "admin_notify": "/api/admin/users/<int:user_id>/notify" in rules,
+                "admin_dashboard": "/api/admin/dashboard" in rules,
+                "api_trending": "/api/trending" in rules,
             }
         )
 
@@ -115,7 +124,15 @@ if __name__ == "__main__":
 
     # Ensure all DB tables exist
     with app.app_context():
-        from app.models import AdminNotification  # noqa: F401 — register model
+        from app.models import (  # noqa: F401 — register models
+            AdminNotification,
+            Wishlist,
+            ListingReport,
+            ListingMessage,
+            SellerRating,
+            SavedSearch,
+            BlockedUser,
+        )
 
         db.create_all()
         from app.auth.verification_utils import migrate_user_verification_columns

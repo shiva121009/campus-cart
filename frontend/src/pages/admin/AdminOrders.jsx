@@ -5,6 +5,7 @@ import "../../components/admin/AdminLayout.css";
 
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
+  const [statusFilter, setStatusFilter] = useState("waiting");
   const showToast = useToast();
 
   const load = () => {
@@ -28,10 +29,31 @@ function AdminOrders() {
       .catch(() => showToast("Update failed", "error"));
   };
 
+  const filtered =
+    statusFilter === "all"
+      ? orders
+      : orders.filter((o) => o.status === statusFilter);
+
   return (
     <div>
       <h1 className="admin-page-title">Orders</h1>
       <p className="admin-page-lead">All checkout messages across the marketplace.</p>
+      <div className="admin-filter-bar">
+        <label htmlFor="order-status-filter">Show</label>
+        <select
+          id="order-status-filter"
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+        >
+          <option value="waiting">Waiting (default)</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="canceled">Canceled</option>
+          <option value="all">All statuses</option>
+        </select>
+        <span className="admin-filter-count">
+          {filtered.length} of {orders.length}
+        </span>
+      </div>
       <div className="admin-table-wrap">
         <table className="admin-table">
           <thead>
@@ -45,7 +67,7 @@ function AdminOrders() {
             </tr>
           </thead>
           <tbody>
-            {orders.map((o) => (
+            {filtered.map((o) => (
               <tr key={o.id}>
                 <td>
                   {o.post_title}

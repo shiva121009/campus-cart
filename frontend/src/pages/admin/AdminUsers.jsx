@@ -16,6 +16,8 @@ function statusBadge(status, suspended) {
 function AdminUsers() {
   const { refreshPending } = useOutletContext() || {};
   const [users, setUsers] = useState([]);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [notifyUser, setNotifyUser] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const showToast = useToast();
@@ -116,6 +118,19 @@ function AdminUsers() {
       );
   };
 
+  const q = search.trim().toLowerCase();
+  const filtered = users.filter((u) => {
+    if (statusFilter !== "all" && u.verification_status !== statusFilter) {
+      return false;
+    }
+    if (!q) return true;
+    return (
+      (u.name || "").toLowerCase().includes(q) ||
+      (u.email || "").toLowerCase().includes(q) ||
+      (u.student_id || "").toLowerCase().includes(q)
+    );
+  });
+
   return (
     <div>
       <h1 className="admin-page-title">Users</h1>
@@ -123,6 +138,28 @@ function AdminUsers() {
         Send dashboard notifications (info, warning, or restriction). Students see
         them on their home page with a bell toggle.
       </p>
+      <div className="admin-filter-bar admin-filter-bar--users">
+        <input
+          type="search"
+          placeholder="Search name, email, roll no…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          aria-label="Search users"
+        />
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          aria-label="Filter by status"
+        >
+          <option value="all">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="approved">Approved</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <span className="admin-filter-count">
+          {filtered.length} of {users.length}
+        </span>
+      </div>
       <div className="admin-table-wrap">
         <table className="admin-table">
           <thead>
@@ -137,7 +174,7 @@ function AdminUsers() {
             </tr>
           </thead>
           <tbody>
-            {users.map((u) => (
+            {filtered.map((u) => (
               <tr key={u.id}>
                 <td>
                   {u.name}

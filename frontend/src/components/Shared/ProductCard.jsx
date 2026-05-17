@@ -66,7 +66,7 @@ function ProductCard({
           >
             <FaEye /> View
           </button>
-          {showActions && onAddToCart && (
+          {showActions && onAddToCart && !item.is_sold && (
             <button
               type="button"
               className={`card-overlay-btn card-overlay-btn--cart ${justAdded ? "is-success" : ""}`}
@@ -94,9 +94,15 @@ function ProductCard({
         onClick={handleView}
         aria-label={`View details for ${item.title}`}
       >
-        {item.category && (
-          <span className="category-pill">{item.category}</span>
-        )}
+        <div className="card-body-meta">
+          {item.is_sold && <span className="card-sold-pill">Sold</span>}
+          {item.category && <span className="category-pill">{item.category}</span>}
+          {item.seller_verified && (
+            <span className="card-verified" title="Verified seller">
+              Verified
+            </span>
+          )}
+        </div>
         <h3 className="card-title">{item.title}</h3>
       </button>
 
@@ -109,7 +115,7 @@ function ProductCard({
           >
             <FaEye aria-hidden /> View
           </button>
-          {onAddToCart && (
+          {onAddToCart && !item.is_sold && (
             <button
               type="button"
               onClick={handleAddToCart}

@@ -10,6 +10,7 @@ import {
   FaClipboardList,
   FaShieldAlt,
   FaUser,
+  FaHeart,
 } from "react-icons/fa";
 import api from "../api/client";
 import { useAuth } from "../context/AuthContext";
@@ -80,6 +81,7 @@ function Navbar() {
       icon: FaShoppingCart,
       badge: cartCount,
     },
+    { to: "/wishlist", label: "Wishlist", icon: FaHeart },
     { to: "/yourorders", label: "Your Orders", icon: FaClipboardList },
     { to: "/profile", label: "Profile", icon: FaUser },
     ...(isAdmin ? [{ to: "/admin", label: "Admin", icon: FaShieldAlt }] : []),

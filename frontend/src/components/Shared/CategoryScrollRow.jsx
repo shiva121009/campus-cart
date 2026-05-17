@@ -36,7 +36,7 @@ function CategoryScrollRow({
           {title}
           <span className="category-row-count">{items.length}</span>
         </h3>
-        <div className="category-row-nav" aria-hidden={items.length <= 3}>
+        <div className="category-row-nav" aria-hidden={items.length <= 1}>
           <button
             type="button"
             className="category-scroll-btn"
@@ -71,6 +71,7 @@ function CategoryScrollRow({
                 onView={onView}
                 onAddToCart={onAddToCart}
                 compact
+                showActions={false}
               />
             </div>
           ))}

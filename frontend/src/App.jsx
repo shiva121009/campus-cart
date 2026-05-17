@@ -25,6 +25,12 @@ import AdminListings from "./pages/admin/AdminListings";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminRegister from "./pages/admin/AdminRegister";
+import Wishlist from "./pages/Wishlist";
+import LegalPrivacy from "./pages/LegalPrivacy";
+import LegalTerms from "./pages/LegalTerms";
+import SellerProfile from "./pages/SellerProfile";
+import ForgotPassword from "./pages/ForgotPassword";
+import AdminReports from "./pages/admin/AdminReports";
 
 function App() {
   return (
@@ -32,6 +38,9 @@ function App() {
       <Route path="/" element={<WelcomePage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/privacy" element={<LegalPrivacy />} />
+      <Route path="/terms" element={<LegalTerms />} />
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/register" element={<AdminRegister />} />
       <Route path="/pending-verification" element={<PendingVerification />} />
@@ -51,6 +60,8 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/viewmessages" element={<ViewMessages />} />
         <Route path="/viewmessages/:postId" element={<ViewMessages />} />
+        <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/seller/:id" element={<SellerProfile />} />
       </Route>
 
       <Route path="/admin" element={<AdminGuard />}>
@@ -60,6 +71,7 @@ function App() {
           <Route path="users" element={<AdminUsers />} />
           <Route path="listings" element={<AdminListings />} />
           <Route path="orders" element={<AdminOrders />} />
+          <Route path="reports" element={<AdminReports />} />
         </Route>
       </Route>
 

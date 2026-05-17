@@ -5,7 +5,8 @@ from werkzeug.security import (
 )
 from flask_login import login_user, logout_user, login_required, current_user
 
-from datetime import datetime
+import secrets
+from datetime import datetime, timedelta
 
 from app.models import db, User, AdminNotification
 from app.auth.verification_utils import (
@@ -152,6 +153,61 @@ def api_login():
 def api_logout():
     logout_user()
     return jsonify({"message": "Logout successful"}), 200
+
+
+@auth_bp.route("/api/forgot-password", methods=["POST", "OPTIONS"])
+def forgot_password():
+    if request.method == "OPTIONS":
+        return "", 204
+    data = request.get_json() or {}
+    email = (data.get("email") or "").lower().strip()
+    if not email:
+        return jsonify({"message": "Email is required"}), 400
+    user = User.query.filter_by(email=email).first()
+    if user:
+        token = secrets.token_urlsafe(32)
+        user.reset_token = token
+        user.reset_token_expires = datetime.utcnow() + timedelta(hours=1)
+        db.session.commit()
+        return jsonify(
+            {
+                "message": "If that email exists, use the reset token below (demo mode).",
+                "reset_token": token,
+            }
+        ), 200
+    return jsonify(
+        {"message": "If that email exists, a reset link would be sent."}
+    ), 200
+
+
+@auth_bp.route("/api/reset-password", methods=["POST", "OPTIONS"])
+def reset_password():
+    if request.method == "OPTIONS":
+        return "", 204
+    data = request.get_json() or {}
+    email = (data.get("email") or "").lower().strip()
+    token = (data.get("token") or "").strip()
+    new_password = data.get("new_password") or ""
+    confirm = data.get("confirm_password") or ""
+    if not all([email, token, new_password, confirm]):
+        return jsonify({"message": "All fields are required"}), 400
+    if new_password != confirm:
+        return jsonify({"message": "Passwords do not match"}), 400
+    if len(new_password) < 6:
+        return jsonify({"message": "Password must be at least 6 characters"}), 400
+    user = User.query.filter_by(email=email).first()
+    if (
+        not user
+        or user.reset_token != token
+        or not user.reset_token_expires
+        or user.reset_token_expires < datetime.utcnow()
+    ):
+        return jsonify({"message": "Invalid or expired reset token"}), 400
+    user.password = generate_password_hash(new_password)
+    user.reset_token = None
+    user.reset_token_expires = None
+    db.session.commit()
+    return jsonify({"message": "Password updated. You can log in now."}), 200
 
 
 @auth_bp.route("/api/home", methods=["GET"])

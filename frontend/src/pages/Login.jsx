@@ -112,6 +112,15 @@ function Login() {
           </form>
 
           <p className="link-text">
+            <button
+              type="button"
+              className="register-link"
+              onClick={() => navigate("/forgot-password")}
+            >
+              Forgot password?
+            </button>
+          </p>
+          <p className="link-text">
             Don&apos;t have an account?{" "}
             <button
               type="button"

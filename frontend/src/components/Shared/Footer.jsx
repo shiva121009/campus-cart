@@ -140,13 +140,13 @@ function Footer() {
             © {year} CampusCart. All rights reserved. Major Project · CDLU.
           </p>
           <nav className="footer-legal" aria-label="Legal">
-            <button type="button" onClick={go("/contact")}>
+            <button type="button" onClick={go("/privacy")}>
               Privacy
             </button>
             <span className="footer-legal-dot" aria-hidden>
               ·
             </span>
-            <button type="button" onClick={go("/contact")}>
+            <button type="button" onClick={go("/terms")}>
               Terms
             </button>
             <span className="footer-legal-dot" aria-hidden>
