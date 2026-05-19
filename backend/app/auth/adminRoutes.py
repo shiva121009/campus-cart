@@ -17,7 +17,11 @@ from app.models import (
     ListingReport,
 )
 from app.auth.verification_utils import get_id_upload_folder, user_to_public_dict
-from app.auth.admin_notify_utils import process_admin_notify
+from app.auth.admin_notify_utils import (
+    broadcast_recipient_count,
+    process_admin_broadcast,
+    process_admin_notify,
+)
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -441,6 +445,28 @@ def list_all_users():
             for u in users
         ]
     )
+
+
+@admin_bp.route("/api/admin/broadcast/preview", methods=["GET", "OPTIONS"])
+@admin_required
+def admin_broadcast_preview():
+    if request.method == "OPTIONS":
+        return "", 204
+    audience = (request.args.get("audience") or "all_students").strip().lower()
+    return jsonify(
+        {
+            "audience": audience,
+            "recipients_count": broadcast_recipient_count(audience),
+        }
+    )
+
+
+@admin_bp.route("/api/admin/broadcast", methods=["POST", "OPTIONS"])
+@admin_required
+def admin_broadcast():
+    if request.method == "OPTIONS":
+        return "", 204
+    return process_admin_broadcast(request.get_json() or {})
 
 
 @admin_bp.route("/api/admin/users/<int:user_id>/notify", methods=["POST", "OPTIONS"])

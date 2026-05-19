@@ -29,13 +29,7 @@ def _load_research_models():
     return _bert_model, _nlp
 
 
-def reciprocal_rank_fusion(rankings, k=60):
-    scores = {}
-    for ranking in rankings:
-        for rank, doc_id in enumerate(ranking):
-            scores.setdefault(doc_id, 0)
-            scores[doc_id] += 1 / (k + rank + 1)
-    return scores
+from app.nlp.hybrid_search import reciprocal_rank_fusion
 
 
 def compare_models(user_query):

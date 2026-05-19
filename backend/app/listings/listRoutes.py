@@ -9,6 +9,7 @@ from app.listings.listing_utils import (
     get_wishlist_ids,
 )
 from datetime import datetime
+import json
 import os
 
 listings_bp = Blueprint("listings", __name__)
@@ -36,6 +37,31 @@ def _save_upload(file_storage):
         path = os.path.join(UPLOAD_FOLDER, filename)
     file_storage.save(path)
     return filename
+
+
+MAX_LISTING_PHOTOS = 5
+_UPLOAD_KEYS = ("image", "image2", "image3", "image4", "image5")
+
+
+def _save_uploads_from_request():
+    names = []
+    for key in _UPLOAD_KEYS:
+        f = request.files.get(key)
+        if f:
+            saved = _save_upload(f)
+            if saved:
+                names.append(saved)
+    return names[:MAX_LISTING_PHOTOS]
+
+
+def _apply_images_to_post(post, filenames):
+    names = [n for n in (filenames or []) if n][:MAX_LISTING_PHOTOS]
+    if not names:
+        post.image = None
+        post.set_extra_images([])
+        return
+    post.image = names[0]
+    post.set_extra_images(names[1:])
 
 
 @listings_bp.route("/api/listings", methods=["GET"])
@@ -83,29 +109,22 @@ def create_listing():
     if not all([title, description, category, price]):
         return jsonify({"message": "Missing required fields"}), 400
 
-    filename = _save_upload(image_file) if image_file else None
-    extra_names = []
-    for key in ("image2", "image3", "image4"):
-        f = request.files.get(key)
-        if f:
-            saved = _save_upload(f)
-            if saved:
-                extra_names.append(saved)
+    uploaded = _save_uploads_from_request()
 
     new_post = Post(
         title=title,
         description=description,
         category=category,
         price=int(price),
-        image=filename,
+        image=None,
         timestamp=datetime.utcnow(),
         user_id=current_user.id,
         condition=request.form.get("condition") or "good",
         negotiable=request.form.get("negotiable") in ("1", "true", "on", "yes"),
         pickup_location=request.form.get("pickup_location") or None,
     )
-    if extra_names:
-        new_post.set_extra_images(extra_names)
+    if uploaded:
+        _apply_images_to_post(new_post, uploaded)
 
     db.session.add(new_post)
     db.session.commit()
@@ -166,11 +185,20 @@ def update_listing(listing_id):
         post.pickup_location = request.form.get("pickup_location")
     post.negotiable = request.form.get("negotiable") in ("1", "true", "on", "yes")
 
-    image_file = request.files.get("image")
-    if image_file:
-        saved = _save_upload(image_file)
-        if saved:
-            post.image = saved
+    retain_raw = request.form.get("retain_images")
+    new_uploads = _save_uploads_from_request()
+    if retain_raw is not None:
+        try:
+            kept = json.loads(retain_raw)
+            kept = [k for k in kept if isinstance(k, str) and k][:MAX_LISTING_PHOTOS]
+        except (json.JSONDecodeError, TypeError):
+            kept = []
+        combined = (kept + new_uploads)[:MAX_LISTING_PHOTOS]
+        _apply_images_to_post(post, combined)
+    elif new_uploads:
+        existing = [post.image] if post.image else []
+        existing.extend(post.get_extra_images())
+        _apply_images_to_post(post, (existing + new_uploads)[:MAX_LISTING_PHOTOS])
 
     db.session.commit()
     return jsonify({"message": "Listing updated"}), 200

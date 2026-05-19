@@ -17,7 +17,9 @@ from app.models import (
     BlockedUser,
     YourCart,
     CheckoutMessage,
+    UserActivity,
 )
+from app.nlp.similar_items import get_similar_posts
 from app.auth.verification_utils import verified_required, user_to_public_dict
 from app.listings.listing_utils import (
     visible_posts_query,
@@ -63,6 +65,13 @@ def toggle_wishlist():
         return jsonify({"in_wishlist": False, "message": "Removed from wishlist"}), 200
     item = Wishlist(user_id=current_user.id, post_id=post_id)
     db.session.add(item)
+    db.session.add(
+        UserActivity(
+            user_id=current_user.id,
+            post_id=post_id,
+            action="wishlist",
+        )
+    )
     db.session.commit()
     return jsonify({"in_wishlist": True, "message": "Added to wishlist"}), 200
 
@@ -95,14 +104,13 @@ def report_listing(listing_id):
 def similar_listings(listing_id):
     post = Post.query.get_or_404(listing_id)
     wl_ids = get_wishlist_ids(current_user.id)
-    others = (
+    candidates = (
         visible_posts_query(current_user.id)
-        .filter(Post.id != listing_id, Post.category == post.category)
-        .order_by(Post.timestamp.desc())
-        .limit(8)
+        .filter(Post.id != listing_id)
         .all()
     )
-    return jsonify([post_to_json(p, current_user.id, wl_ids) for p in others]), 200
+    similar = get_similar_posts(post, candidates, top_n=8)
+    return jsonify([post_to_json(p, current_user.id, wl_ids) for p in similar]), 200
 
 
 @ux_bp.route("/api/listings/<int:listing_id>/sold", methods=["POST"])

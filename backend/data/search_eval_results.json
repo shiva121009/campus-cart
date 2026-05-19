@@ -1,0 +1,201 @@
+{
+  "summary": {
+    "queries_evaluated": 10,
+    "queries_skipped": 0,
+    "precision_at_k": 5,
+    "recall_at_k": 10,
+    "tfidf": {
+      "avg_precision_at_5": 0.675,
+      "avg_recall_at_10": 0.7333,
+      "avg_mrr": 0.75
+    },
+    "hybrid": {
+      "avg_precision_at_5": 0.675,
+      "avg_recall_at_10": 0.7333,
+      "avg_mrr": 0.75
+    },
+    "listings_in_db": 20,
+    "known_titles_sample": [
+      "Tabe",
+      "pen",
+      "dslkfj",
+      "Scientific Calculator (Casio)",
+      "Java Programming Textbook"
+    ]
+  },
+  "per_query": [
+    {
+      "query": "calculator",
+      "relevant_count": 1,
+      "tfidf_precision_at_5": 1.0,
+      "tfidf_recall_at_10": 1.0,
+      "tfidf_mrr": 1.0,
+      "hybrid_precision_at_5": 1.0,
+      "hybrid_recall_at_10": 1.0,
+      "hybrid_mrr": 1.0,
+      "tfidf_top5_titles": [
+        "Scientific Calculator (Casio)"
+      ],
+      "hybrid_top5_titles": [
+        "Scientific Calculator (Casio)"
+      ]
+    },
+    {
+      "query": "programming book",
+      "relevant_count": 2,
+      "tfidf_precision_at_5": 1.0,
+      "tfidf_recall_at_10": 1.0,
+      "tfidf_mrr": 1.0,
+      "hybrid_precision_at_5": 1.0,
+      "hybrid_recall_at_10": 1.0,
+      "hybrid_mrr": 1.0,
+      "tfidf_top5_titles": [
+        "Python Crash Course Book",
+        "Java Programming Textbook"
+      ],
+      "hybrid_top5_titles": [
+        "Python Crash Course Book",
+        "Java Programming Textbook"
+      ]
+    },
+    {
+      "query": "laptop accessories",
+      "relevant_count": 3,
+      "tfidf_precision_at_5": 0.0,
+      "tfidf_recall_at_10": 0.0,
+      "tfidf_mrr": 0.0,
+      "hybrid_precision_at_5": 0.0,
+      "hybrid_recall_at_10": 0.0,
+      "hybrid_mrr": 0.0,
+      "tfidf_top5_titles": [
+        "Foldable Study Table"
+      ],
+      "hybrid_top5_titles": [
+        "Foldable Study Table"
+      ]
+    },
+    {
+      "query": "study furniture",
+      "relevant_count": 2,
+      "tfidf_precision_at_5": 0.6666666666666666,
+      "tfidf_recall_at_10": 1.0,
+      "tfidf_mrr": 0.5,
+      "hybrid_precision_at_5": 0.6666666666666666,
+      "hybrid_recall_at_10": 1.0,
+      "hybrid_mrr": 0.5,
+      "tfidf_top5_titles": [
+        "Tabe",
+        "Foldable Study Table",
+        "Wooden Study Table"
+      ],
+      "hybrid_top5_titles": [
+        "Tabe",
+        "Foldable Study Table",
+        "Wooden Study Table"
+      ]
+    },
+    {
+      "query": "electric kettle",
+      "relevant_count": 1,
+      "tfidf_precision_at_5": 1.0,
+      "tfidf_recall_at_10": 1.0,
+      "tfidf_mrr": 1.0,
+      "hybrid_precision_at_5": 1.0,
+      "hybrid_recall_at_10": 1.0,
+      "hybrid_mrr": 1.0,
+      "tfidf_top5_titles": [
+        "Electric Kettle 1L"
+      ],
+      "hybrid_top5_titles": [
+        "Electric Kettle 1L"
+      ]
+    },
+    {
+      "query": "college shirt uniform",
+      "relevant_count": 1,
+      "tfidf_precision_at_5": 1.0,
+      "tfidf_recall_at_10": 1.0,
+      "tfidf_mrr": 1.0,
+      "hybrid_precision_at_5": 1.0,
+      "hybrid_recall_at_10": 1.0,
+      "hybrid_mrr": 1.0,
+      "tfidf_top5_titles": [
+        "College Uniform Shirt (L)"
+      ],
+      "hybrid_top5_titles": [
+        "College Uniform Shirt (L)"
+      ]
+    },
+    {
+      "query": "football sports",
+      "relevant_count": 3,
+      "tfidf_precision_at_5": 0.75,
+      "tfidf_recall_at_10": 1.0,
+      "tfidf_mrr": 1.0,
+      "hybrid_precision_at_5": 0.75,
+      "hybrid_recall_at_10": 1.0,
+      "hybrid_mrr": 1.0,
+      "tfidf_top5_titles": [
+        "Football (Size 5)",
+        "Football Shoes Size 9",
+        "Exercise Resistance Band",
+        "Badminton Net Set"
+      ],
+      "hybrid_top5_titles": [
+        "Football (Size 5)",
+        "Football Shoes Size 9",
+        "Exercise Resistance Band",
+        "Badminton Net Set"
+      ]
+    },
+    {
+      "query": "party music speaker",
+      "relevant_count": 1,
+      "tfidf_precision_at_5": 1.0,
+      "tfidf_recall_at_10": 1.0,
+      "tfidf_mrr": 1.0,
+      "hybrid_precision_at_5": 1.0,
+      "hybrid_recall_at_10": 1.0,
+      "hybrid_mrr": 1.0,
+      "tfidf_top5_titles": [
+        "Bluetooth Party Speaker"
+      ],
+      "hybrid_top5_titles": [
+        "Bluetooth Party Speaker"
+      ]
+    },
+    {
+      "query": "usb storage",
+      "relevant_count": 3,
+      "tfidf_precision_at_5": 0.3333333333333333,
+      "tfidf_recall_at_10": 0.3333333333333333,
+      "tfidf_mrr": 1.0,
+      "hybrid_precision_at_5": 0.3333333333333333,
+      "hybrid_recall_at_10": 0.3333333333333333,
+      "hybrid_mrr": 1.0,
+      "tfidf_top5_titles": [
+        "32GB USB Pendrive",
+        "USB Keyboard",
+        "Gaming Mouse"
+      ],
+      "hybrid_top5_titles": [
+        "32GB USB Pendrive",
+        "USB Keyboard",
+        "Gaming Mouse"
+      ]
+    },
+    {
+      "query": "gym fitness",
+      "relevant_count": 1,
+      "tfidf_precision_at_5": 0.0,
+      "tfidf_recall_at_10": 0.0,
+      "tfidf_mrr": 0.0,
+      "hybrid_precision_at_5": 0.0,
+      "hybrid_recall_at_10": 0.0,
+      "hybrid_mrr": 0.0,
+      "tfidf_top5_titles": [],
+      "hybrid_top5_titles": []
+    }
+  ],
+  "skipped": []
+}

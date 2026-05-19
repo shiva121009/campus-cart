@@ -3,7 +3,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from app.models import Post
 
 
-def semantic_search(query, top_n=500):
+def semantic_search(query, top_n=500, min_score=0.05):
     posts = Post.query.all()
     if not posts or not query:
         return []
@@ -29,9 +29,11 @@ def semantic_search(query, top_n=500):
         reverse=True
     )
 
-    ranked_ids = [pid for pid, score in ranked if score > 0.05][:top_n]
+    ranked_ids = [pid for pid, score in ranked if score > min_score][:top_n]
 
     if not ranked_ids:
         return []
 
-    return Post.query.filter(Post.id.in_(ranked_ids)).all()
+    posts = Post.query.filter(Post.id.in_(ranked_ids)).all()
+    post_map = {p.id: p for p in posts}
+    return [post_map[pid] for pid in ranked_ids if pid in post_map]

@@ -16,6 +16,17 @@ import { useToast } from "../context/ToastContext";
 import { useAuth } from "../context/AuthContext";
 import "./Profile.css";
 
+const CURRENT_YEAR = new Date().getFullYear();
+const SESSION_YEARS = Array.from(
+  { length: CURRENT_YEAR - 2014 + 8 },
+  (_, i) => 2015 + i
+);
+
+function formatSession(start, end) {
+  if (start && end) return `${start} – ${end}`;
+  return null;
+}
+
 const QUICK_LINKS = [
   { to: "/youritems", label: "Your Items", icon: FaBox },
   { to: "/yourorders", label: "Your Orders", icon: FaClipboardList },
@@ -36,6 +47,8 @@ function Profile() {
     bio: "",
     course: "",
     year_of_study: "",
+    session_start_year: "",
+    session_end_year: "",
     hostel_or_location: "",
     interests: "",
     current_password: "",
@@ -53,6 +66,10 @@ function Profile() {
         bio: u.bio || "",
         course: u.course || "",
         year_of_study: u.year_of_study || "",
+        session_start_year: u.session_start_year
+          ? String(u.session_start_year)
+          : "",
+        session_end_year: u.session_end_year ? String(u.session_end_year) : "",
         hostel_or_location: u.hostel_or_location || "",
         interests: u.interests || "",
         current_password: "",
@@ -76,7 +93,17 @@ function Profile() {
 
   const onChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    setForm((prev) => {
+      const next = { ...prev, [name]: value };
+      if (
+        name === "session_start_year" &&
+        next.session_end_year &&
+        Number(next.session_end_year) < Number(value)
+      ) {
+        next.session_end_year = "";
+      }
+      return next;
+    });
   };
 
   const handleAvatarChange = (e) => {
@@ -127,6 +154,10 @@ function Profile() {
   const completeness = profile?.completeness ?? 0;
   const stats = profile?.stats || {};
   const avatarSrc = avatarUrl(profile?.avatar);
+  const sessionLabel = formatSession(
+    profile?.session_start_year,
+    profile?.session_end_year
+  );
 
   return (
     <div className="page-shell profile-page">
@@ -163,6 +194,11 @@ function Profile() {
               <div className="profile-hero-info">
                 <h2>{form.name || "Student"}</h2>
                 <p className="profile-hero-email">{profile?.email}</p>
+                {sessionLabel && (
+                  <p className="profile-hero-meta profile-hero-session">
+                    Academic session {sessionLabel}
+                  </p>
+                )}
                 {profile?.member_since && (
                   <p className="profile-hero-meta">
                     Member since {profile.member_since}
@@ -293,6 +329,45 @@ function Profile() {
                       placeholder="e.g. 2nd year"
                     />
                   </label>
+                  <label className="profile-field">
+                    Session from
+                    <select
+                      name="session_start_year"
+                      value={form.session_start_year}
+                      onChange={onChange}
+                    >
+                      <option value="">Select year</option>
+                      {SESSION_YEARS.map((y) => (
+                        <option key={y} value={String(y)}>
+                          {y}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="profile-field">
+                    Session to
+                    <select
+                      name="session_end_year"
+                      value={form.session_end_year}
+                      onChange={onChange}
+                    >
+                      <option value="">Select year</option>
+                      {SESSION_YEARS.filter(
+                        (y) =>
+                          !form.session_start_year ||
+                          y >= Number(form.session_start_year)
+                      ).map((y) => (
+                        <option key={y} value={String(y)}>
+                          {y}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  {form.session_start_year && form.session_end_year && (
+                    <p className="profile-session-preview profile-field--full">
+                      Your batch: {form.session_start_year} – {form.session_end_year}
+                    </p>
+                  )}
                   <label className="profile-field profile-field--full">
                     Hostel / campus location
                     <input

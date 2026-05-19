@@ -3,7 +3,7 @@ from flask_login import current_user
 
 from app.auth.verification_utils import verified_required
 from app.models import db, UserActivity, Post, BlockedUser
-from app.nlp.semantic_search import semantic_search
+from app.nlp.hybrid_search import search_listings as ml_search
 from app.listings.listing_utils import post_to_json, get_wishlist_ids, visible_posts_query
 
 search = Blueprint("searchitems", __name__)
@@ -27,7 +27,7 @@ def search_listings():
             )
         )
         db.session.commit()
-        posts = semantic_search(search_term.lower(), top_n=500)
+        posts = ml_search(search_term.lower(), top_n=500)
         blocked = {
             b.blocked_id
             for b in BlockedUser.query.filter_by(blocker_id=current_user.id).all()

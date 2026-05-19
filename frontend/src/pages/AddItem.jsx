@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
+import { FaCamera, FaTimes } from "react-icons/fa";
 import Navbar from "../components/navbar";
 import Footer from "../components/Shared/Footer";
 import PageHeader from "../components/Shared/PageHeader";
@@ -8,17 +9,43 @@ import { API_BASE, uploadUrl } from "../config";
 import { useToast } from "../context/ToastContext";
 import "./AddItem.css";
 
+const MAX_PHOTOS = 5;
+const UPLOAD_KEYS = ["image", "image2", "image3", "image4", "image5"];
+
+function makePhotoId() {
+  return `p-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function buildPhotoSlots(primary, extras = []) {
+  const slots = [];
+  if (primary) {
+    slots.push({
+      id: makePhotoId(),
+      existing: primary,
+      url: uploadUrl(primary),
+    });
+  }
+  extras.forEach((filename) => {
+    slots.push({
+      id: makePhotoId(),
+      existing: filename,
+      url: uploadUrl(filename),
+    });
+  });
+  return slots;
+}
+
 function AddItem() {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     category: "",
     price: "",
-    image: null,
   });
-  const [imagePreview, setImagePreview] = useState(null);
+  const [photos, setPhotos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
   const { id } = useParams();
   const showToast = useToast();
@@ -33,12 +60,11 @@ function AddItem() {
             title: res.data.title,
             description: res.data.description,
             category: res.data.category,
-            price: res.data.price,
-            image: null,
+            price: String(res.data.price),
           });
-          if (res.data.image) {
-            setImagePreview(uploadUrl(res.data.image));
-          }
+          setPhotos(
+            buildPhotoSlots(res.data.image, res.data.extra_images || [])
+          );
         })
         .catch((err) => {
           console.error("Failed to load listing:", err);
@@ -49,23 +75,74 @@ function AddItem() {
   }, [id, showToast]);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "image" && files.length > 0) {
-      setFormData((prev) => ({ ...prev, image: files[0] }));
-      setImagePreview(URL.createObjectURL(files[0]));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const addPhotos = (fileList) => {
+    const files = Array.from(fileList || []).filter((f) =>
+      f.type.startsWith("image/")
+    );
+    if (!files.length) return;
+
+    const room = MAX_PHOTOS - photos.length;
+    if (room <= 0) {
+      showToast(`You can add up to ${MAX_PHOTOS} photos`, "error");
+      return;
     }
+
+    const accepted = files.slice(0, room);
+    if (files.length > room) {
+      showToast(`Only ${MAX_PHOTOS} photos allowed; extra files skipped`, "info");
+    }
+
+    setPhotos((prev) => [
+      ...prev,
+      ...accepted.map((file) => {
+        const blobUrl = URL.createObjectURL(file);
+        return {
+          id: makePhotoId(),
+          file,
+          blobUrl,
+          url: blobUrl,
+        };
+      }),
+    ]);
+  };
+
+  const removePhoto = (photoId) => {
+    setPhotos((prev) => {
+      const target = prev.find((p) => p.id === photoId);
+      if (target?.blobUrl) URL.revokeObjectURL(target.blobUrl);
+      return prev.filter((p) => p.id !== photoId);
+    });
+  };
+
+  const appendImagesToPayload = (payload) => {
+    if (id) {
+      const kept = photos.filter((p) => p.existing).map((p) => p.existing);
+      payload.append("retain_images", JSON.stringify(kept));
+      const newFiles = photos.filter((p) => p.file).map((p) => p.file);
+      newFiles.forEach((file, index) => {
+        payload.append(UPLOAD_KEYS[index] || UPLOAD_KEYS[UPLOAD_KEYS.length - 1], file);
+      });
+      return;
+    }
+
+    const files = photos.filter((p) => p.file).map((p) => p.file);
+    files.forEach((file, index) => {
+      payload.append(UPLOAD_KEYS[index] || UPLOAD_KEYS[UPLOAD_KEYS.length - 1], file);
+    });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const payload = new FormData();
-    for (const key in formData) {
-      if (formData[key]) {
-        payload.append(key, formData[key]);
-      }
-    }
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value !== "" && value != null) payload.append(key, value);
+    });
+    appendImagesToPayload(payload);
+
     const endpoint = id
       ? `${API_BASE}/api/listings/${id}`
       : `${API_BASE}/api/listings`;
@@ -89,6 +166,8 @@ function AddItem() {
       .finally(() => setSubmitting(false));
   };
 
+  const canAddMore = photos.length < MAX_PHOTOS;
+
   return (
     <div className="page-shell add-item-page">
       <Navbar />
@@ -96,7 +175,7 @@ function AddItem() {
         <PageHeader
           kicker="Marketplace"
           title={id ? "Edit Item" : "Add New Item"}
-          subtitle="Share details and a photo so buyers can find your listing."
+          subtitle={`Add up to ${MAX_PHOTOS} photos so buyers can see your item from every angle.`}
         />
         {loading ? (
           <p className="loading-message">Loading…</p>
@@ -141,22 +220,69 @@ function AddItem() {
             <input
               type="number"
               name="price"
-              placeholder="Price"
+              placeholder="Price (₹)"
               value={formData.price}
               onChange={handleChange}
               required
+              min="0"
               className="form-control"
             />
-            <input
-              type="file"
-              name="image"
-              accept="image/*"
-              onChange={handleChange}
-              className="form-control form-file-input"
-            />
-            {imagePreview && (
-              <img src={imagePreview} alt="Preview" className="image-preview" />
-            )}
+
+            <div className="add-item-photos">
+              <div className="add-item-photos-head">
+                <label className="add-item-photos-label">Photos</label>
+                <span className="add-item-photos-count">
+                  {photos.length} / {MAX_PHOTOS}
+                </span>
+              </div>
+              <p className="add-item-photos-hint">
+                First photo is the cover image. Drag in multiple files or tap to
+                browse.
+              </p>
+
+              <div className="add-item-photo-grid">
+                {photos.map((photo, index) => (
+                  <div key={photo.id} className="add-item-photo-slot">
+                    <img src={photo.url} alt="" className="add-item-photo-img" />
+                    {index === 0 && (
+                      <span className="add-item-photo-cover">Cover</span>
+                    )}
+                    <button
+                      type="button"
+                      className="add-item-photo-remove"
+                      onClick={() => removePhoto(photo.id)}
+                      aria-label="Remove photo"
+                    >
+                      <FaTimes />
+                    </button>
+                  </div>
+                ))}
+
+                {canAddMore && (
+                  <button
+                    type="button"
+                    className="add-item-photo-add"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    <FaCamera aria-hidden />
+                    <span>Add photo</span>
+                  </button>
+                )}
+              </div>
+
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="add-item-photo-input"
+                onChange={(e) => {
+                  addPhotos(e.target.files);
+                  e.target.value = "";
+                }}
+              />
+            </div>
+
             <button type="submit" className="submit-button" disabled={submitting}>
               {submitting
                 ? "Saving…"

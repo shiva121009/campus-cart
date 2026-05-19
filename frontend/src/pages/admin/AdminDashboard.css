@@ -7,6 +7,23 @@
   flex-wrap: wrap;
 }
 
+.admin-dashboard-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-dashboard-broadcast {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-broadcast-toolbar-btn {
+  flex-shrink: 0;
+}
+
 .admin-dashboard-refresh {
   display: inline-flex;
   align-items: center;

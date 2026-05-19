@@ -27,6 +27,8 @@ class User(UserMixin, db.Model):
     bio = db.Column(db.Text, nullable=True)
     course = db.Column(db.String(100), nullable=True)
     year_of_study = db.Column(db.String(30), nullable=True)
+    session_start_year = db.Column(db.Integer, nullable=True)
+    session_end_year = db.Column(db.Integer, nullable=True)
     hostel_or_location = db.Column(db.String(120), nullable=True)
     avatar = db.Column(db.String(300), nullable=True)
     interests = db.Column(db.String(255), nullable=True)

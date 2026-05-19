@@ -242,6 +242,8 @@ def user_profile():
     bio = (data.get("bio") or "").strip()
     course = (data.get("course") or "").strip()
     year_of_study = (data.get("year_of_study") or "").strip()
+    session_start_raw = data.get("session_start_year")
+    session_end_raw = data.get("session_end_year")
     hostel_or_location = (data.get("hostel_or_location") or "").strip()
     interests = (data.get("interests") or "").strip()[:255]
 
@@ -252,11 +254,38 @@ def user_profile():
     if len(bio) > 500:
         return jsonify({"message": "Bio must be 500 characters or less"}), 400
 
+    session_start_year = None
+    session_end_year = None
+    if session_start_raw not in (None, "", "null"):
+        try:
+            session_start_year = int(session_start_raw)
+        except (TypeError, ValueError):
+            return jsonify({"message": "Invalid session start year"}), 400
+    if session_end_raw not in (None, "", "null"):
+        try:
+            session_end_year = int(session_end_raw)
+        except (TypeError, ValueError):
+            return jsonify({"message": "Invalid session end year"}), 400
+
+    if session_start_year is not None or session_end_year is not None:
+        if session_start_year is None or session_end_year is None:
+            return jsonify(
+                {"message": "Please select both session start and end years"}
+            ), 400
+        if session_end_year < session_start_year:
+            return jsonify(
+                {"message": "Session end year must be after start year"}
+            ), 400
+        if session_start_year < 2000 or session_end_year > 2045:
+            return jsonify({"message": "Session years must be between 2000 and 2045"}), 400
+
     current_user.name = name
     current_user.phone = phone
     current_user.bio = bio or None
     current_user.course = course or None
     current_user.year_of_study = year_of_study or None
+    current_user.session_start_year = session_start_year
+    current_user.session_end_year = session_end_year
     current_user.hostel_or_location = hostel_or_location or None
     current_user.interests = interests or None
 

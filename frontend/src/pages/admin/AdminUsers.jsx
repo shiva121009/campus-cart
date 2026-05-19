@@ -3,6 +3,7 @@ import { useOutletContext } from "react-router-dom";
 import api from "../../api/client";
 import { useToast } from "../../context/ToastContext";
 import AdminNotifyModal from "../../components/admin/AdminNotifyModal";
+import AdminBroadcastModal from "../../components/admin/AdminBroadcastModal";
 import "../../components/admin/AdminLayout.css";
 
 function statusBadge(status, suspended) {
@@ -19,7 +20,9 @@ function AdminUsers() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [notifyUser, setNotifyUser] = useState(null);
+  const [broadcastOpen, setBroadcastOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [broadcastSubmitting, setBroadcastSubmitting] = useState(false);
   const showToast = useToast();
 
   const load = () => {
@@ -59,6 +62,27 @@ function AdminUsers() {
         if (err.response?.status !== 404) throw err;
         return api.post(`/api/admin/notify/${userId}`, body);
       });
+
+  const sendBroadcast = ({ message, category, audience }) => {
+    setBroadcastSubmitting(true);
+    api
+      .post("/api/admin/broadcast", { message, category, audience })
+      .then((res) => {
+        showToast(res.data.message || "Broadcast sent", "success");
+        setBroadcastOpen(false);
+        load();
+      })
+      .catch((err) =>
+        showToast(
+          err.response?.data?.message ||
+            (err.response?.status === 404
+              ? "Broadcast API missing — restart backend (python run.py)"
+              : "Broadcast failed"),
+          "error"
+        )
+      )
+      .finally(() => setBroadcastSubmitting(false));
+  };
 
   const sendNotify = ({ message, category, suspend }) => {
     if (!notifyUser) return;
@@ -139,6 +163,13 @@ function AdminUsers() {
         them on their home page with a bell toggle.
       </p>
       <div className="admin-filter-bar admin-filter-bar--users">
+        <button
+          type="button"
+          className="admin-btn admin-btn-message admin-broadcast-toolbar-btn"
+          onClick={() => setBroadcastOpen(true)}
+        >
+          Broadcast to all
+        </button>
         <input
           type="search"
           placeholder="Search name, email, roll no…"
@@ -246,6 +277,13 @@ function AdminUsers() {
           onClose={() => setNotifyUser(null)}
           onSubmit={sendNotify}
           submitting={submitting}
+        />
+      )}
+      {broadcastOpen && (
+        <AdminBroadcastModal
+          onClose={() => setBroadcastOpen(false)}
+          onSubmit={sendBroadcast}
+          submitting={broadcastSubmitting}
         />
       )}
     </div>

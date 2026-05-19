@@ -473,6 +473,16 @@
   color: var(--color-text);
 }
 
+.home-section-lead {
+  margin: -8px 0 12px;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.home-carousel-section--foryou .home-section-title {
+  margin-bottom: 4px;
+}
+
 .home-carousel-track {
   display: flex;
   gap: 12px;

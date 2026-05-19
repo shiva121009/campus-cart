@@ -105,6 +105,8 @@ def user_to_public_dict(user):
         "bio": getattr(user, "bio", None) or "",
         "course": getattr(user, "course", None) or "",
         "year_of_study": getattr(user, "year_of_study", None) or "",
+        "session_start_year": getattr(user, "session_start_year", None),
+        "session_end_year": getattr(user, "session_end_year", None),
         "hostel_or_location": getattr(user, "hostel_or_location", None) or "",
         "avatar": getattr(user, "avatar", None) or "",
         "interests": getattr(user, "interests", None) or "",
@@ -122,6 +124,8 @@ def profile_completeness(user):
         bool(getattr(user, "bio", None)),
         bool(getattr(user, "course", None)),
         bool(getattr(user, "year_of_study", None)),
+        bool(getattr(user, "session_start_year", None))
+        and bool(getattr(user, "session_end_year", None)),
         bool(getattr(user, "hostel_or_location", None)),
         bool(getattr(user, "avatar", None)),
         bool(getattr(user, "interests", None)),
@@ -222,6 +226,10 @@ def migrate_user_verification_columns(app):
             statements.append("ALTER TABLE Users ADD COLUMN course VARCHAR(100)")
         if "year_of_study" not in existing:
             statements.append("ALTER TABLE Users ADD COLUMN year_of_study VARCHAR(30)")
+        if "session_start_year" not in existing:
+            statements.append("ALTER TABLE Users ADD COLUMN session_start_year INTEGER")
+        if "session_end_year" not in existing:
+            statements.append("ALTER TABLE Users ADD COLUMN session_end_year INTEGER")
         if "hostel_or_location" not in existing:
             statements.append(
                 "ALTER TABLE Users ADD COLUMN hostel_or_location VARCHAR(120)"

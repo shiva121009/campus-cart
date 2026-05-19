@@ -92,6 +92,27 @@
   cursor: pointer;
 }
 
+.admin-broadcast-recipients {
+  margin: -4px 0 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--color-primary) 10%, var(--color-bg-subtle));
+  border: 1px solid color-mix(in srgb, var(--color-primary) 25%, var(--color-border));
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.admin-broadcast-recipients.is-error {
+  background: color-mix(in srgb, #dc2626 10%, var(--color-bg-subtle));
+  border-color: color-mix(in srgb, #dc2626 35%, var(--color-border));
+  color: #dc2626;
+}
+
+.admin-broadcast-modal .admin-modal-textarea {
+  min-height: 140px;
+}
+
 .admin-modal-hint {
   margin: 0 0 16px;
   font-size: 0.75rem;

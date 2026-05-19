@@ -11,7 +11,7 @@ import {
 import Navbar from "../components/navbar";
 import Footer from "../components/Shared/Footer";
 import MobileBottomNav from "../components/MobileBottomNav";
-import ProductCard from "../components/Shared/ProductCard";
+import SimilarItemsCarousel from "../components/Shared/SimilarItemsCarousel";
 import api from "../api/client";
 import { uploadUrl } from "../config";
 import { useToast } from "../context/ToastContext";
@@ -23,6 +23,7 @@ function View() {
   const navigate = useNavigate();
   const [item, setItem] = useState(null);
   const [similar, setSimilar] = useState([]);
+  const [similarLoading, setSimilarLoading] = useState(true);
   const [activeImage, setActiveImage] = useState(0);
   const [loading, setLoading] = useState(true);
   const [chatOpen, setChatOpen] = useState(false);
@@ -44,9 +45,15 @@ function View() {
     });
 
   useEffect(() => {
+    setSimilarLoading(true);
+    setSimilar([]);
     loadListing()
       .then(() =>
-        api.get(`/api/listings/${id}/similar`).then((res) => setSimilar(res.data || []))
+        api
+          .get(`/api/listings/${id}/similar`)
+          .then((res) => setSimilar(res.data || []))
+          .catch(() => setSimilar([]))
+          .finally(() => setSimilarLoading(false))
       )
       .catch(() => {
         showToast("Listing not found", "error");
@@ -88,8 +95,13 @@ function View() {
   };
 
   const handleAddToCart = () => {
+    if (!item?.id) return;
+    addToCart(item.id);
+  };
+
+  const addToCart = (postId) => {
     api
-      .post("/api/yourcart/add", { post_id: item.id })
+      .post("/api/yourcart/add", { post_id: postId })
       .then((res) => {
         showToast(res.data.message, "success");
         window.dispatchEvent(new Event("campuscart:refresh-badges"));
@@ -97,6 +109,12 @@ function View() {
       .catch((err) =>
         showToast(err.response?.data?.message || "Failed", "error")
       );
+  };
+
+  const browseCategory = (cat) => {
+    if (!cat) return;
+    sessionStorage.setItem("campuscart:home-category", cat);
+    navigate("/home");
   };
 
   const markSold = () => {
@@ -297,21 +315,14 @@ function View() {
         </div>
       </main>
 
-      {similar.length > 0 && (
-        <section className="view-similar page-content">
-          <h3>Similar items</h3>
-          <div className="view-similar-grid">
-            {similar.map((s) => (
-              <ProductCard
-                key={s.id}
-                item={s}
-                compact
-                onView={(lid) => navigate(`/listing/${lid}`)}
-              />
-            ))}
-          </div>
-        </section>
-      )}
+      <SimilarItemsCarousel
+        items={similar}
+        loading={similarLoading}
+        category={item?.category || ""}
+        onView={(lid) => navigate(`/listing/${lid}`)}
+        onAddToCart={addToCart}
+        onBrowseCategory={browseCategory}
+      />
 
       <Footer />
       <MobileBottomNav />

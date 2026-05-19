@@ -1,0 +1,9 @@
+# CampusCart backend (core)
+flask>=3.0.0
+flask-sqlalchemy>=3.1.0
+flask-cors>=4.0.0
+flask-login>=0.6.3
+werkzeug>=3.0.0
+
+# ML / search (see requirements-ml.txt for pinned research stack)
+-r requirements-ml.txt

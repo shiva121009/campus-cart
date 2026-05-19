@@ -63,6 +63,7 @@ function Home() {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [trending, setTrending] = useState([]);
+  const [forYou, setForYou] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [recent, setRecent] = useState([]);
   const [showAutocomplete, setShowAutocomplete] = useState(false);
@@ -126,9 +127,18 @@ function Home() {
   );
 
   useEffect(() => {
+    const savedCategory = sessionStorage.getItem("campuscart:home-category");
+    if (savedCategory) {
+      sessionStorage.removeItem("campuscart:home-category");
+      setCategory(savedCategory);
+    }
+
     setLoading(true);
+    const listingParams = savedCategory
+      ? { sort: "newest", category: savedCategory }
+      : { sort: "newest" };
     api
-      .get("/api/listings", { params: { sort: "newest" } })
+      .get("/api/listings", { params: listingParams })
       .then((res) => setSuggestedItems(res.data || []))
       .catch(() => setSuggestedItems([]))
       .finally(() => setLoading(false));
@@ -136,6 +146,10 @@ function Home() {
       .get("/api/trending")
       .then((res) => setTrending(res.data || []))
       .catch(() => setTrending([]));
+    api
+      .get("/api/recommendations")
+      .then((res) => setForYou(res.data || []))
+      .catch(() => setForYou([]));
     setRecent(getRecentlyViewed());
   }, []);
 
@@ -253,6 +267,7 @@ function Home() {
 
   const busy = loading || searching;
   const showTrending = !searchPerformed && trending.length > 0 && !busy;
+  const showForYou = !searchPerformed && forYou.length > 0 && !busy;
   const showRecent = !searchPerformed && recent.length > 0 && !busy;
 
   return (
@@ -406,6 +421,29 @@ function Home() {
                     compact
                     showActions={false}
                     badge="Hot"
+                    onView={(lid) => navigate(`/listing/${lid}`)}
+                    onAddToCart={handleAddToCart}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {showForYou && (
+          <section className="home-carousel-section home-carousel-section--foryou">
+            <h2 className="home-section-title">Recommended for you</h2>
+            <p className="home-section-lead">
+              Based on your searches, views, and wishlist
+            </p>
+            <div className="home-carousel-track">
+              {forYou.slice(0, 10).map((item) => (
+                <div key={item.id} className="home-carousel-item">
+                  <ProductCard
+                    item={item}
+                    compact
+                    showActions={false}
+                    badge="For you"
                     onView={(lid) => navigate(`/listing/${lid}`)}
                     onAddToCart={handleAddToCart}
                   />

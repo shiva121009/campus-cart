@@ -11,9 +11,11 @@ import {
   FaCheckCircle,
   FaBan,
   FaShoppingBag,
+  FaBullhorn,
 } from "react-icons/fa";
 import api from "../../api/client";
 import { useToast } from "../../context/ToastContext";
+import AdminBroadcastModal from "../../components/admin/AdminBroadcastModal";
 import AdminDashboardChart from "../../components/admin/AdminDashboardChart";
 import AdminOrderModal from "../../components/admin/AdminOrderModal";
 import AdminReportModal from "../../components/admin/AdminReportModal";
@@ -26,6 +28,8 @@ function AdminDashboard() {
   const [refreshing, setRefreshing] = useState(false);
   const [orderModal, setOrderModal] = useState(null);
   const [reportModal, setReportModal] = useState(null);
+  const [broadcastOpen, setBroadcastOpen] = useState(false);
+  const [broadcastSubmitting, setBroadcastSubmitting] = useState(false);
   const showToast = useToast();
 
   const loadFromLegacyApis = () =>
@@ -133,6 +137,26 @@ function AdminDashboard() {
         load(true);
       })
       .catch(() => showToast("Update failed", "error"));
+  };
+
+  const sendBroadcast = ({ message, category, audience }) => {
+    setBroadcastSubmitting(true);
+    api
+      .post("/api/admin/broadcast", { message, category, audience })
+      .then((res) => {
+        showToast(res.data.message || "Broadcast sent", "success");
+        setBroadcastOpen(false);
+      })
+      .catch((err) =>
+        showToast(
+          err.response?.data?.message ||
+            (err.response?.status === 404
+              ? "Broadcast API missing — restart backend (python run.py)"
+              : "Broadcast failed"),
+          "error"
+        )
+      )
+      .finally(() => setBroadcastSubmitting(false));
   };
 
   const updateReport = (id, status) => {
@@ -273,15 +297,25 @@ function AdminDashboard() {
             CampusCart overview — users, listings, orders, and moderation.
           </p>
         </div>
-        <button
-          type="button"
-          className="admin-dashboard-refresh"
-          onClick={() => load(true)}
-          disabled={refreshing}
-        >
-          <FaSyncAlt className={refreshing ? "is-spinning" : ""} aria-hidden />
-          {refreshing ? "Refreshing…" : "Refresh"}
-        </button>
+        <div className="admin-dashboard-header-actions">
+          <button
+            type="button"
+            className="admin-btn admin-btn-message admin-dashboard-broadcast"
+            onClick={() => setBroadcastOpen(true)}
+          >
+            <FaBullhorn aria-hidden />
+            Broadcast message
+          </button>
+          <button
+            type="button"
+            className="admin-dashboard-refresh"
+            onClick={() => load(true)}
+            disabled={refreshing}
+          >
+            <FaSyncAlt className={refreshing ? "is-spinning" : ""} aria-hidden />
+            {refreshing ? "Refreshing…" : "Refresh"}
+          </button>
+        </div>
       </header>
 
       {(pending > 0 || waitingOrders > 0 || pendingReports > 0) && (
@@ -539,6 +573,13 @@ function AdminDashboard() {
           report={reportModal}
           onClose={() => setReportModal(null)}
           onUpdate={updateReport}
+        />
+      )}
+      {broadcastOpen && (
+        <AdminBroadcastModal
+          onClose={() => setBroadcastOpen(false)}
+          onSubmit={sendBroadcast}
+          submitting={broadcastSubmitting}
         />
       )}
     </div>

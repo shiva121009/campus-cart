@@ -103,6 +103,48 @@ def create_app():
     app.register_blueprint(research_bp)
     app.register_blueprint(ux_bp)
 
+    def _ml_import_status():
+        """Lightweight Phase 0 check — imports only, does not load BERT weights."""
+        status = {}
+        for key, module in (
+            ("sklearn", "sklearn"),
+            ("bm25", "rank_bm25"),
+            ("spacy", "spacy"),
+            ("sentence_transformers", "sentence_transformers"),
+        ):
+            try:
+                __import__(module)
+                status[key] = True
+            except ImportError:
+                status[key] = False
+        status["spacy_en_core_web_md"] = False
+        import importlib.util
+
+        status["spacy_en_core_web_md"] = (
+            importlib.util.find_spec("en_core_web_md") is not None
+        )
+        status["torch"] = False
+        try:
+            import torch
+
+            torch.tensor([1.0])
+            status["torch"] = True
+        except Exception:
+            pass
+        status["phase0_ready"] = (
+            status.get("sklearn")
+            and status.get("bm25")
+            and status.get("torch")
+            and status.get("sentence_transformers")
+        )
+        try:
+            from app.nlp.hybrid_search import get_search_mode
+
+            status["search_mode"] = get_search_mode()
+        except ImportError:
+            status["search_mode"] = "unknown"
+        return status
+
     @app.route("/api/health", methods=["GET"])
     def api_health():
         """Quick check that this server build includes admin notify."""
@@ -111,8 +153,12 @@ def create_app():
             {
                 "ok": True,
                 "admin_notify": "/api/admin/users/<int:user_id>/notify" in rules,
+                "admin_broadcast": "/api/admin/broadcast" in rules,
+                "admin_broadcast_preview": "/api/admin/broadcast/preview" in rules,
                 "admin_dashboard": "/api/admin/dashboard" in rules,
                 "api_trending": "/api/trending" in rules,
+                "research_compare": "/research/compare" in rules,
+                "ml": _ml_import_status(),
             }
         )
 
@@ -138,7 +184,9 @@ if __name__ == "__main__":
         from app.auth.verification_utils import migrate_user_verification_columns
 
         migrate_user_verification_columns(app)
-        print("CampusCart API ready — admin notify: POST /api/admin/users/<id>/notify")
+        print(
+            "CampusCart API ready — broadcast: GET/POST /api/admin/broadcast"
+        )
 
 
     # use_reloader=False: one process, no "Restarting with stat" / duplicate debugger child.

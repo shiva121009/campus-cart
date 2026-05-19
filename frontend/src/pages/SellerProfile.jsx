@@ -65,7 +65,15 @@ function SellerProfile() {
                 <FaCheckCircle aria-hidden /> Verified student
               </span>
             )}
-            <p>{seller.course || "Campus seller"}</p>
+            <p>
+              {seller.course || "Campus seller"}
+              {seller.session_start_year && seller.session_end_year && (
+                <>
+                  {" · "}
+                  Session {seller.session_start_year}–{seller.session_end_year}
+                </>
+              )}
+            </p>
             <p className="seller-rating">
               <FaStar aria-hidden /> {rating.avg || "—"} ({rating.count} reviews)
             </p>
